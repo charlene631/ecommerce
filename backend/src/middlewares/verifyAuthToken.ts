@@ -1,7 +1,18 @@
+import { Request, Response, NextFunction } from 'express';
 import env from '../config/env.js'
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload }from "jsonwebtoken";
 
-const auth = async (req, res, next) => {
+//  Typage du payload du token
+interface JwtUser {
+    email: string;
+}
+
+// Extension de l'interface Request pour inclure le champ user
+interface AuthRequest extends Request {
+    user?: JwtUser;
+}
+
+const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         const authHeaders = req.headers.authorization;
 
@@ -14,9 +25,9 @@ const auth = async (req, res, next) => {
         }
 
         const token = authHeaders.split(" ")[1];
-        req.user = jwt.verify(token, env.JWT_SECRET);
+        req.user = jwt.verify(token, env.JWT_SECRET) as JwtUser;
         next();
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
         res.status(403).json({ error: `Token invalide ou expiré` });
     }
