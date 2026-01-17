@@ -1,22 +1,34 @@
-import * as Order from "../models/orderModel.js";
+import { Request, Response } from "express";
+import * as Order from "../models/orderModel";
 import {
-    createCheckoutSession,
-    createPaymentIntents,
-} from "../middlewares/payment.js";
+    createCheckoutSession
+} from "../middlewares/payment";
+import { Cart, CartItem } from "../types/cart";
+import { OrderProduct, OrderInput, OrderRow } from "../types/order";
 
-export async function createOrder(req, res) {
+export async function createOrder(req: Request, res: Response) {
     try {
-        const buyerId = req.user.id;
-        const cart = req.cookies.cart ? JSON.parse(req.cookies.cart) : {};
-        const products = cart.products ?? [];
+        const buyerId = req.user;
+        if (!buyerId) return res.status(401).json({ error: "Non autorisé" });
+
+        const cart: Cart = req.cookies.cart ? (JSON.parse(req.cookies.cart) as Cart): { products: [], total: 0 };
+        const products: CartItem[] = cart.products ?? [];
 
         if (!products.length)
             return res.status(400).json({ error: "Le panier est vide." });
 
+       // Mapper les produits pour correspondre à OrderInput["products"]
+    const dbProducts: OrderInput["products"] = products.map((p) => ({
+      id: p.id,
+      name: p.name,
+      unit_price: p.unit_price,
+      qty: p.qty,
+    }));
+
         // Enregistrement de la commande
         const result = await Order.create({
-            products,
-            buyerId,
+            products: dbProducts,
+            buyerId: Number(buyerId.id),
         });
         const orderId = result.orderId;
 
@@ -39,21 +51,25 @@ export async function createOrder(req, res) {
     }
 }
 
-export async function findBuyerOrders(req, res) {
+// Récupérer les commandes d'un acheteur
+export async function findBuyerOrders(req: Request, res: Response) {
     try {
-        const buyerId = req.user.id;
-        const orders = await Order.findByBuyerId(buyerId);
+        const buyerId = req.user?.id;
+        if (!buyerId) return res.status(401).json({ error: "Utilisateur non authentifié." });
+        const orders: OrderRow[] = await Order.findByBuyerId(buyerId);
         if (!orders.length)
             return res.status(404).json({ error: "Aucune commande trouvée." });
 
+        // Récupérer les produits pour chaque commande
         await Promise.all(
-            orders.map(async (order) => {
-                order.products = await Order.findOrderProducts({
-                    orderId: order.id,
-                    buyerId,
-                });
-            })
-        );
+      orders.map(async (order) => {
+        const products: OrderProduct[] = await Order.findOrderProducts({
+          orderId: order.id,
+          buyerId,
+        });
+        order.products = products;
+      })
+    );
 
         res.status(200).json(orders);
     } catch (error) {
@@ -62,11 +78,15 @@ export async function findBuyerOrders(req, res) {
     }
 }
 
-export async function checkoutOrder(req, res) {
+// Checkout d'une commande
+export async function checkoutOrder(req: Request, res: Response) {
     try {
-        const buyerId = req.user.id;
-        const orderId = req.params.orderId;
-        const products = await Order.findOrderProducts({ orderId, buyerId });
+        const buyerId = req.user?.id;
+        if (!buyerId) return res.status(401).json({ error: "Utilisateur non authentifié." });
+        const orderId = Number(req.params.orderId);
+        if (Number.isNaN(orderId))
+            return res.status(400).json({ error: "ID de commande invalide." });
+        const products: OrderProduct[] = await Order.findOrderProducts({ orderId, buyerId });
 
         if (!products)
             return res.status(404).json({
@@ -80,13 +100,7 @@ export async function checkoutOrder(req, res) {
             items: products,
         });
 
-        // Payment via Stripe Payment Intents (on récupère le client_secret)
-        // const paymentIntent = await createPaymentIntents({
-        //     buyerId,
-        //     orderId,
-        //     items: products,
-        // });
-
+        // Mettre à jour du statut de la commande
         const updateResult = await Order.update({
             status: "payment_in_progress",
             id: orderId,

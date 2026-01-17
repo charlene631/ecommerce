@@ -1,8 +1,10 @@
+// backend/src/config/env.ts
 import "dotenv/config";
 import { cleanEnv, host, port, str, url } from "envalid";
 
+// Définition des variables d'environnement
 const env = cleanEnv(process.env, {
-    // Serveur
+    // Configuration du serveur
     PROTOCOL: str({
         choices: ["http", "https"],
         devDefault: "http",
@@ -14,26 +16,30 @@ const env = cleanEnv(process.env, {
     // Front-end
     FRONTEND_URL: url({ devDefault: "http://localhost:3000" }),
 
-    // Cors
+    // CORS
     CORS_ORIGIN: url({ devDefault: "http://localhost:3000" }),
 
     // Base de données
-    DB_URI: url(),
+    DB_HOST: host({ devDefault: "127.0.0.1" }),
+    DB_USER: str({ devDefault: "charlene" }),
+    DB_PASS: str({ devDefault: "charlene" }),
+    DB_NAME: str({ devDefault: "app_db" }),
 
     // JWT
     JWT_SECRET: str({ devDefault: "MonSuperSecretDeLaMortQuiTue" }),
     JWT_EMAIL_VERIFICATION_EXPIRES_IN: str({ default: "1h" }),
     JWT_ACCESS_EXPIRES_IN: str({ devDefault: "24h" }),
 
-    // Nodemailer
-    //EMAIL_SERVICE: str(),
-    //EMAIL_USER: str(),
-    //EMAIL_PASS: str(),
-    //EMAIL_FROM: str({ devDefault: "Mon application <noreply@nodomain.com>" }),
-
     // Stripe
     STRIPE_SECRET_KEY: str(),
     STRIPE_WEBHOOK_SECRET: str(),
+
+    // Nodemailer (décommenter et configurer si nécessaire)
+    EMAIL_SERVICE: str({ devDefault: "" }),
+    EMAIL_USER: str({ devDefault: "" }),
+    EMAIL_PASS: str({ devDefault: "" }),
+    EMAIL_FROM: str({ devDefault: "Mon application <noreply@nodomain.com>" }),
 });
 
+// Export des variables d'environnement
 export default env;

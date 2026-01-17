@@ -1,16 +1,35 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
-    "rootDir": ".",
-    "outDir": "dist",
+    "module": "CommonJS",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "types": ["node", "express"],
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true
-  }
+    "moduleResolution": "node",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "src/types/**/*.d.ts",         
+    "src/types/**/*.ts"
+  ],
+
+  // ── This section is very important for ts-node ──
+  "ts-node": {
+    "transpileOnly": true,          // much faster, recommended for development
+    "files": true,                  // ← crucial! tells ts-node to respect "include"
+    "compilerOptions": {
+      // You can override some options just for ts-node if needed
+      "module": "CommonJS"
+    },
+    // Optional but sometimes helps a lot:
+    "require": ["tsconfig-paths/register"]   // if you use paths aliases
+  },
+  
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,21 +1,21 @@
-import env from "./src/config/env.js";
-import express from "express";
+import env from "./config/env";
+import express, { Express, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import {
     useHelmet,
     useCORS,
     useRateLimit,
-} from "./src/middlewares/security.js";
-import authRoutes from "./src/routes/authRoutes.js";
-import productRoutes from "./src/routes/productRoutes.js";
-import { initCart } from "./src/middlewares/initCart.js";
-import cartRoutes from "./src/routes/cartRoutes.js";
-import verifyAuthToken from "./src/middlewares/verifyAuthToken.js";
-import isSeller from "./src/middlewares/verifyRole.js";
-import orderRoutes from "./src/routes/orderRoutes.js";
-import stripeWebhook from "./src/routes/stripeWebhook.js";
+} from "./middlewares/security";
+import authRoutes from "./routes/authRoutes";
+import productRoutes from "./routes/productRoutes";
+import { initCart } from "./middlewares/initCart";
+import cartRoutes from "./routes/cartRoutes";
+import verifyAuthToken from "./middlewares/verifyAuthToken";
+import isSeller from "./middlewares/verifyRole";
+import orderRoutes from "./routes/orderRoutes";
+import stripeWebhook from "./routes/stripeWebhook";
 
-const app = express();
+const app: Express = express();
 
 // Sécurité
 useHelmet(app);
@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(initCart);
 
 // Routes
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
     res.send("Bienvenue !");
 });
 
@@ -49,5 +49,6 @@ app.use("/api/order", verifyAuthToken, orderRoutes);
 app.listen(env.PORT, () => {
     console.log(`Serveur lancé sur ${env.PROTOCOL}://${env.HOST}:${env.PORT}`);
 });
+
 
 export default app;

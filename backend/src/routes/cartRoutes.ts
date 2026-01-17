@@ -1,7 +1,12 @@
-import express from "express";
-import { getCart, addToCart, removeFromCart, validateCart } from "../controllers/cartController.js";
+import { Router } from "express";
+import {
+  getCart,
+  addToCart,
+  removeFromCart,
+  validateCart,
+} from "../controllers/cartController";
 
-const router = express.Router();
+const router: Router = Router();
 
 // Récupérer le panier (accessible sans login)
 router.get("/", getCart);

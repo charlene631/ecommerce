@@ -1,18 +1,17 @@
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import env from "../config/env.js";
+import { Express } from "express";
+import env from '../config/env';
 
 
-// Helmet : erreurs de sécurité
-
-export function useHelmet(app) {
+// Helmet : sécurité HTTP
+export function useHelmet(app: Express): void {
   app.use(helmet());
 }
 
 // CORS : autorise seulement certains domaines
-
-export function useCORS(app) {
+export function useCORS(app: Express): void {
   app.use(
     cors({
       origin: env.CORS_ORIGIN,
@@ -22,8 +21,7 @@ export function useCORS(app) {
 }
 
 // Rate Limit : limite les requêtes pour éviter les attaques
-
-export function useRateLimit(app) {
+export function useRateLimit(app: Express): void {
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // max 100 requêtes par IP

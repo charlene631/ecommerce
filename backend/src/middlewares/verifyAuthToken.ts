@@ -1,36 +1,28 @@
-import { Request, Response, NextFunction } from 'express';
-import env from '../config/env.js'
-import jwt, { JwtPayload }from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import env from "../config/env";
+import jwt from "jsonwebtoken";
+import { AuthTokenPayload } from "../types/user";
 
-//  Typage du payload du token
-interface JwtUser {
-    email: string;
+export async function verifyAuthToken(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) return res.status(401).json({ error: "Token absent." });
+    if (!authHeader.startsWith("Bearer ")) return res.status(401).json({ error: "Format du token invalide." });
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(
+      token,
+      env.JWT_SECRET
+    ) as AuthTokenPayload;
+
+    req.user = decoded;
+
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(403).json({ error: "Token invalide ou expiré" });
+  }
 }
 
-// Extension de l'interface Request pour inclure le champ user
-interface AuthRequest extends Request {
-    user?: JwtUser;
-}
-
-const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
-    try {
-        const authHeaders = req.headers.authorization;
-
-        if (!authHeaders) {
-            return res.status(401).json({ error: "Token absent." });
-        }
-
-        if (!authHeaders.startsWith("Bearer ")) {
-            return res.status(401).json({ error: "Format du token invalide." });
-        }
-
-        const token = authHeaders.split(" ")[1];
-        req.user = jwt.verify(token, env.JWT_SECRET) as JwtUser;
-        next();
-    } catch (error: any) {
-        console.error(error);
-        res.status(403).json({ error: `Token invalide ou expiré` });
-    }
-};
-
-export default auth;
+export default verifyAuthToken;

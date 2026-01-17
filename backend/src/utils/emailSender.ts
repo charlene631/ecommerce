@@ -1,6 +1,14 @@
-import nodemailer from "nodemailer";
+import nodemailer, { SentMessageInfo } from "nodemailer";
 
-export async function sendEmail({ to, subject, html }) {
+// Interface pour les options de l'email
+interface EmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+}
+
+export async function sendEmail({ to, subject, html }: EmailOptions): Promise<SentMessageInfo> {
+try {
     const transporter = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
         auth: {
@@ -18,4 +26,8 @@ export async function sendEmail({ to, subject, html }) {
 
     const result = await transporter.sendMail(mailOptions);
     return result;
+} catch (error) {
+    console.error("Erreur lors de l'envoi de l'email :", error);
+    throw new Error("Erreur lors de l'envoi de l'email");
+}
 }
