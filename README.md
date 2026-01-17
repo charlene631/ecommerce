@@ -60,8 +60,7 @@ Une réflexion a également été menée autour de la **containerisation avec Do
 La base de données utilisée est **MariaDB**.
 
 Les interactions avec la base ont été réalisées :
-- via le **client MariaDB / MySQL en ligne de commande**,
-- à travers la configuration définie dans le projet et les modèles applicatifs.
+- via le **client MariaDB / Docker en ligne de commande**
 
 Exemple de connexion en ligne de commande :
 
