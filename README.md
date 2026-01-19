@@ -6,7 +6,7 @@ Ce projet est une application **e-commerce** développée initialement dans le c
 J’ai ensuite repris le projet en autonomie afin de le comprendre, le corriger et le faire évoluer techniquement.
 
 Le travail de reprise a notamment porté sur :
-- la **migration de la base de données vers MariaDB**,
+- la **migration de la base de données alwaysdata vers MariaDB**,
 - la prise en main et la réorganisation du backend,
 - la **migration progressive du projet en TypeScript**,
 - la compréhension et la clarification de la configuration globale du projet.
