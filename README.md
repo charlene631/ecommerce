@@ -68,54 +68,72 @@ Exemple de connexion en ligne de commande :
 mysql -u USER -p -h HOST DATABASE_NAME
 
 ```
+Le schéma de base de données est disponible dans backend/schema/schema.sql.
 
 ## 🗄️ Structure du projet 
 
 ecommerce/
-├── src/
-│   ├── controllers/
-│   │   ├── authController.ts
-│   │   ├── userController.ts
-│   │   ├── productController.ts
-│   │   ├── orderController.ts
-│   │   └── stripeController.ts
-│   ├── routes/
-│   │   ├── authRoutes.ts
-│   │   ├── userRoutes.ts
-│   │   ├── productRoutes.ts
-│   │   ├── orderRoutes.ts
-│   │   └── stripeWebhook.ts
-│   ├── middlewares/
-│   │   ├── initCart.ts
-│   │   ├── payment.ts
-│   │   ├── security.ts
-│   │   ├── uploadImage.ts
-│   │   ├── verifyAuthToken.ts
-│   │   └── verifyRole.ts
-│   ├── models/
-│   │   ├── cartModel.ts
-│   │   ├── orderModel.ts
-│   │   ├── productModel.ts
-│   │   └── userModel.ts
-│   ├── config/
-│   │   ├── database.ts
-│   │   └── env.ts
-│   ├── types/
-│   │   ├── cart.ts
-│   │   ├── express.d.ts
-│   │   ├── order.ts
-│   │   └── user.ts
-│   └── index.ts
-├── .env
-├── tsconfig.json
-├── package.json
-└── README.md
+├── backend
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   ├── schema
+│   │   ├── schema.sql
+│   │   └── test.sql
+│   ├── src
+│   │   ├── config
+│   │   │   ├── database.ts
+│   │   │   └── env.ts
+│   │   ├── controllers
+│   │   │   ├── authController.ts
+│   │   │   ├── cartController.ts
+│   │   │   ├── orderController.ts
+│   │   │   ├── productController.ts
+│   │   │   └── stripeController.ts
+│   │   ├── index.ts
+│   │   ├── middlewares
+│   │   │   ├── initCart.ts
+│   │   │   ├── payment.ts
+│   │   │   ├── security.ts
+│   │   │   ├── uploadImage.ts
+│   │   │   ├── verifyAuthToken.ts
+│   │   │   └── verifyRole.ts
+│   │   ├── models
+│   │   │   ├── cartModel.ts
+│   │   │   ├── orderModel.ts
+│   │   │   ├── productModel.ts
+│   │   │   └── userModel.ts
+│   │   ├── routes
+│   │   │   ├── authRoutes.ts
+│   │   │   ├── cartRoutes.ts
+│   │   │   ├── orderRoutes.ts
+│   │   │   ├── productRoutes.ts
+│   │   │   └── stripeWebhook.ts
+│   │   ├── types
+│   │   │   ├── cart.ts
+│   │   │   ├── express.d.ts
+│   │   │   ├── order.ts
+│   │   │   └── user.ts
+│   │   ├── utils
+│   │   │   └── emailSender.ts
+│   │   └── validators
+│   │       ├── authValidator.ts
+│   │       ├── cartValidator.ts
+│   │       └── productValidator.ts
+│   ├── tsconfig.json
+│   └── yarn.lock
+├── documentation
+│   └── Conception.excalidraw
+├── frontend
+├── README.md
 
 ```
 ## Installation et lancement
 
-npm install
+git clone <repo>
 
+cd ecommerce/backend
+npm install
 npm run dev
 
 ```

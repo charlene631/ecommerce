@@ -21,12 +21,12 @@ const env = cleanEnv(process.env, {
 
     // Base de données
     DB_HOST: host({ devDefault: "127.0.0.1" }),
-    DB_USER: str({ devDefault: "charlene" }),
-    DB_PASS: str({ devDefault: "charlene" }),
+    DB_USER: str(),
+    DB_PASS: str(),
     DB_NAME: str({ devDefault: "app_db" }),
 
     // JWT
-    JWT_SECRET: str({ devDefault: "MonSuperSecretDeLaMortQuiTue" }),
+    JWT_SECRET: str(),
     JWT_EMAIL_VERIFICATION_EXPIRES_IN: str({ default: "1h" }),
     JWT_ACCESS_EXPIRES_IN: str({ devDefault: "24h" }),
 
